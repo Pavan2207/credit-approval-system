@@ -66,11 +66,19 @@ WSGI_APPLICATION = 'credit_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Check if we're using PostgreSQL (in Docker) or SQLite (local)
-DB_ENGINE = os.environ.get('DB_ENGINE', 'sqlite3')
+# Check if we're using PostgreSQL (in Docker), SQLite (local), or Vercel
 DB_HOST = os.environ.get('DB_HOST', '')
+VERCEL_DEPLOYMENT = os.environ.get('VERCEL', 'False') == 'True'
 
-if DB_HOST:
+if VERCEL_DEPLOYMENT or not DB_HOST:
+    # SQLite configuration (Vercel or local)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
     # PostgreSQL configuration (Docker)
     DATABASES = {
         'default': {
@@ -80,14 +88,6 @@ if DB_HOST:
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
             'HOST': DB_HOST,
             'PORT': os.environ.get('DB_PORT', '5432'),
-        }
-    }
-else:
-    # SQLite configuration (local)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
