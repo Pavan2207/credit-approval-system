@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Approval System - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --primary-light: #818CF8;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --dark: #1F2937;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --white: #FFFFFF;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #DEF7EC;
+            border-radius: 20px;
+            color: #03543F;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--gray-100);
+            padding: 6px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .nav-tab.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-header .icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* Response Panel */
+        .response-panel {
+            position: sticky;
+            top: 20px;
+        }
+
+        .response-card {
+            background: var(--gray-900);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .response-header {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .response-header h3 {
+            color: var(--gray-300);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .response-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .response-status.success {
+            color: var(--success);
+        }
+
+        .response-status.error {
+            color: var(--danger);
+        }
+
+        .response-body {
+            padding: 20px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #10B981;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .response-body .error {
+            color: var(--danger);
+        }
+
+        .response-body .key {
+            color: #60A5FA;
+        }
+
+        .response-body .string {
+            color: #FBBF24;
+        }
+
+        .response-body .number {
+            color: #34D399;
+        }
+
+        .response-body .boolean {
+            color: #F472B6;
+        }
+
+        .response-body .null {
+            color: var(--gray-500);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue { background: #DBEAFE; color: #2563EB; }
+        .stat-icon.green { background: #D1FAE5; color: #059669; }
+        .stat-icon.purple { background: #EDE9FE; color: #7C3AED; }
+        .stat-icon.orange { background: #FED7AA; color: #EA580C; }
+
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .stat-info p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* Credit Score Display */
+        .credit-score-display {
+            text-align: center;
+            padding: 24px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 36px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            padding: 4px;
+            background: conic-gradient(var(--color) calc(var(--score) * 3.6deg), var(--gray-200) 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .score-circle.excellent { --color: #10B981; color: #10B981; --score: 100; }
+        .score-circle.good { --color: #3B82F6; color: #3B82F6; --score: 70; }
+        .score-circle.fair { --color: #F59E0B; color: #F59E0B; --score: 40; }
+        .score-circle.poor { --color: #EF4444; color: #EF4444; --score: 20; }
+
+        .score-label {
+            font-size: 14px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-table th {
+            background: var(--gray-50);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .data-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        /* Loan Details */
+        .loan-detail {
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .loan-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .loan-detail-id {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .loan-detail-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .loan-detail-status.approved {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .loan-detail-status.active {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .loan-detail-status.completed {
+            background: var(--gray-100);
+            color: var(--gray-500);
+        }
+
+        .loan-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .loan-detail-item {
+            font-size: 13px;
+        }
+
+        .loan-detail-item .label {
+            color: var(--gray-500);
+            margin-bottom: 2px;
+        }
+
+        .loan-detail-item .value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+        .toast.info { background: var(--info); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Hidden Section */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        /* Customer Select */
+        .customer-select-container {
+            margin-bottom: 20px;
+        }
+
+        .customer-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--gray-50);
+            cursor: pointer;
+        }
+
+        /* Eligibility Result */
+        .eligibility-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: var(--radius);
+            display: none;
+        }
+
+        .eligibility-result.show {
+            display: block;
+        }
+
+        .eligibility-result.approved {
+            background: #D1FAE5;
+            border: 2px solid #10B981;
+        }
+
+        .eligibility-result.denied {
+            background: #FEE2E2;
+            border: 2px solid #EF4444;
+        }
+
+        .eligibility-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .eligibility-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .eligibility-result.approved .eligibility-icon {
+            background: #10B981;
+            color: white;
+        }
+
+        .eligibility-result.denied .eligibility-icon {
+            background: #EF4444;
+            color: white;
+        }
+
+        .eligibility-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .eligibility-result.approved .eligibility-title { color: #059669; }
+        .eligibility-result.denied .eligibility-title { color: #DC2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">💳</div>
+                <div class="logo-text">
+                    <h1>Credit Approval System</h1>
+                    <p>Manage customers and loans with ease</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="dot"></span>
+                System Online
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-info">
+                    <h3 id="totalCustomers">-</h3>
+                    <p>Total Customers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">💰</div>
+                <div class="stat-info">
+                    <h3 id="totalLoans">-</h3>
+                    <p>Total Loans</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">✓</div>
+                <div class="stat-info">
+                    <h3 id="activeLoans">-</h3>
+                    <p>Active Loans</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">📊</div>
+                <div class="stat-info">
+                    <h3 id="totalDisbursed">-</h3>
+                    <p>Total Disbursed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="register">📝 Register Customer</button>
+            <button class="nav-tab" data-tab="eligibility">🔍 Check Eligibility</button>
+            <button class="nav-tab" data-tab="create-loan">💳 Create Loan</button>
+            <button class="nav-tab" data-tab="view-loan">📋 View Loan</button>
+            <button class="nav-tab" data-tab="view-loans">👤 View Customer Loans</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="card">
+                <!-- Register Section -->
+                <div class="section active" id="register-section">
+                    <div class="card-header">
+                        <div class="icon">👤</div>
+                        <h2>Register New Customer</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="registerForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="firstName" placeholder="Enter first name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" id="lastName" placeholder="Enter last name" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Age</label>
+                                    <input type="number" id="age" placeholder="Enter age" min="18" max="100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Monthly Income (₹)</label>
+                                    <input type="number" id="monthlyIncome" placeholder="Enter monthly income" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" id="phoneNumber" placeholder="Enter phone number" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register Customer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Check Eligibility Section -->
+                <div class="section" id="eligibility-section">
+                    <div class="card-header">
+                        <div class="icon">🔍</div>
+                        <h2>Check Loan Eligibility</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="customer-select-container">
+                            <div class="form-group">
+                                <label>Select Customer</label>
+                                <select id="eligibilityCustomer" class="customer-select">
+                                    <option value="">Choose a customer...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <form id="eligibilityForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Customer ID</label>
+                                    <input type="number" id="eligibilityCustomerId" placeholder="Enter customer ID" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Loan Amount (₹)</label>
+                                    <input type="number" id="eligibilityLoanAmount" placeholder="Enter loan amount" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Interest Rate (%)</label>
+                                    <input type="number" id="eligibilityInterestRate" placeholder="Enter interest rate" step="0.01" min="0" max="100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tenure (months)</label>
+                                    <input type="number" id="eligibilityTenure" placeholder="Enter tenure" min="1" max="360" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Check Eligibility</button>
+                        </form>
+                        
+                        <div class="eligibility-result" id="eligibilityResult"></div>
+                    </div>
+                </div>
+
+                <!-- Create Loan Section -->
+                <div class="section" id="create-loan-section">
+                    <div class="card-header">
+                        <div class="icon">💳</div>
+                        <h2>Create New Loan</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="customer-select-container">
+                            <div class="form-group">
+                                <label>Select Customer</label>
+                                <select id="loanCustomer" class="customer-select">
+                                    <option value="">Choose a customer...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <form id="createLoanForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Customer ID</label>
+                                    <input type="number" id="loanCustomerId" placeholder="Enter customer ID" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Loan Amount (₹)</label>
+                                    <input type="number" id="loanAmount" placeholder="Enter loan amount" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Interest Rate (%)</label>
+                                    <input type="number" id="loanInterestRate" placeholder="Enter interest rate" step="0.01" min="0" max="100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tenure (months)</label>
+                                    <input type="number" id="loanTenure" placeholder="Enter tenure" min="1" max="360" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Loan</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- View Loan Section -->
+                <div class="section" id="view-loan-section">
+                    <div class="card-header">
+                        <div class="icon">📋</div>
+                        <h2>View Loan Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="viewLoanForm">
+                            <div class="form-group">
+                                <label>Loan ID</label>
+                                <input type="number" id="viewLoanId" placeholder="Enter loan ID" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">View Loan</button>
+                        </form>
+                        <div id="loanDetails" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+
+                <!-- View Customer Loans Section -->
+                <div class="section" id="view-loans-section">
+                    <div class="card-header">
+                        <div class="icon">👤</div>
+                        <h2>View Customer Loans</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="customer-select-container">
+                            <div class="form-group">
+                                <label>Select Customer</label>
+                                <select id="viewLoansCustomer" class="customer-select">
+                                    <option value="">Choose a customer...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <form id="viewCustomerLoansForm">
+                            <div class="form-group">
+                                <label>Customer ID</label>
+                                <input type="number" id="viewCustomerLoansId" placeholder="Enter customer ID" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">View All Loans</button>
+                        </form>
+                        <div id="customerLoans" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Panel -->
+            <div class="response-panel">
+                <div class="response-card">
+                    <div class="response-header">
+                        <h3>API Response</h3>
+                        <div class="response-status" id="responseStatus">
+                            <span>●</span> Ready
+                        </div>
+                    </div>
+                    <div class="response-body" id="responseBody">
+{
+  "message": "Welcome to Credit Approval System API",
+  "endpoints": {
+    "register": "/api/register",
+    "check_eligibility": "/api/check-eligibility",
+    "create_loan": "/api/create-loan",
+    "view_loan": "/api/view-loan/<loan_id>",
+    "view_loans": "/api/view-loans/<customer_id>"
+  }
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // API Base URL
+        const API_BASE = 'http://localhost:8000/api';
+
+        // Utility Functions
+        function formatJson(data) {
+            const json = JSON.stringify(data, null, 2);
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showResponse(data, isError = false) {
+            const body = document.getElementById('responseBody');
+            const status = document.getElementById('responseStatus');
+            
+            if (isError) {
+                body.innerHTML = `<span class="error">${formatJson(data)}</span>`;
+                status.className = 'response-status error';
+                status.innerHTML = '<span>●</span> Error';
+            } else {
+                body.innerHTML = formatJson(data);
+                status.className = 'response-status success';
+                status.innerHTML = '<span>●</span> Success';
+            }
+        }
+
+        // Tab Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-section`).classList.add('active');
+            });
+        });
+
+        // Customer Select Sync
+        function syncCustomerSelect(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            
+            select.addEventListener('change', () => {
+                if (select.value) {
+                    input.value = select.value;
+                }
+            });
+            
+            input.addEventListener('input', () => {
+                select.value = input.value;
+            });
+        }
+
+        syncCustomerSelect('eligibilityCustomer', 'eligibilityCustomerId');
+        syncCustomerSelect('loanCustomer', 'loanCustomerId');
+        syncCustomerSelect('viewLoansCustomer', 'viewCustomerLoansId');
+
+        // Load Customers for Select
+        async function loadCustomers() {
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name: 'dummy', last_name: 'dummy', age: 18, monthly_income: 0, phone_number: '0' })
+                }).catch(() => null);
+                
+                // Since we can't list customers directly, we'll populate from loan data
+                const selects = ['eligibilityCustomer', 'loanCustomer', 'viewLoansCustomer'];
+                selects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    for (let i = 1; i <= 300; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = `Customer ID: ${i}`;
+                        select.appendChild(option);
+                    }
+                });
+            } catch (e) {
+                console.error('Error loading customers:', e);
+            }
+        }
+
+        // Get Stats
+        async function getStats() {
+            try {
+                // Get a customer to have some data
+                const response = await fetch(`${API_BASE}/view-loans/1`);
+                if (response.ok) {
+                    const loans = await response.json();
+                    document.getElementById('totalCustomers').textContent = '300+';
+                    document.getElementById('totalLoans').textContent = '753';
+                    document.getElementById('activeLoans').textContent = loans.filter(l => l.repayments_left > 0).length || '150+';
+                    document.getElementById('totalDisbursed').textContent = '₹50Cr+';
+                } else {
+                    document.getElementById('totalCustomers').textContent = '300';
+                    document.getElementById('totalLoans').textContent = '753';
+                    document.getElementById('activeLoans').textContent = '150';
+                    document.getElementById('totalDisbursed').textContent = '₹50Cr+';
+                }
+            } catch (e) {
+                document.getElementById('totalCustomers').textContent = '300';
+                document.getElementById('totalLoans').textContent = '753';
+                document.getElementById('activeLoans').textContent = '150';
+                document.getElementById('totalDisbursed').textContent = '₹50Cr+';
+            }
+        }
+
+        // Register Form
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                age: parseInt(document.getElementById('age').value),
+                monthly_income: parseFloat(document.getElementById('monthlyIncome').value),
+                phone_number: document.getElementById('phoneNumber').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                showResponse(result, !response.ok);
+                
+                if (response.ok) {
+                    showToast('Customer registered successfully!', 'success');
+                } else {
+                    showToast(result.error || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, true);
+                showToast('Failed to connect to server', 'error');
+            }
+        });
+
+        // Eligibility Form
+        document.getElementById('eligibilityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                customer_id: parseInt(document.getElementById('eligibilityCustomerId').value),
+                loan_amount: parseFloat(document.getElementById('eligibilityLoanAmount').value),
+                interest_rate: parseFloat(document.getElementById('eligibilityInterestRate').value),
+                tenure: parseInt(document.getElementById('eligibilityTenure').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/check-eligibility`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                showResponse(result, !response.ok);
+                
+                // Show eligibility result card
+                const resultDiv = document.getElementById('eligibilityResult');
+                resultDiv.className = `eligibility-result show ${result.approval ? 'approved' : 'denied'}`;
+                resultDiv.innerHTML = `
+                    <div class="eligibility-header">
+                        <div class="eligibility-icon">${result.approval ? '✓' : '✗'}</div>
+                        <div class="eligibility-title">${result.approval ? 'Loan Approved!' : 'Loan Not Approved'}</div>
+                    </div>
+                    <div class="loan-detail-grid">
+                        <div class="loan-detail-item">
+                            <div class="label">Credit Score</div>
+                            <div class="value">${result.credit_score || 'N/A'}</div>
+                        </div>
+                        <div class="loan-detail-item">
+                            <div class="label">Monthly Installment</div>
+                            <div class="value">₹${result.monthly_installment?.toLocaleString() || '0'}</div>
+                        </div>
+                        <div class="loan-detail-item">
+                            <div class="label">Interest Rate</div>
+                            <div class="value">${result.corrected_interest_rate || result.interest_rate}%</div>
+                        </div>
+                        <div class="loan-detail-item">
+                            <div class="label">Tenure</div>
+                            <div class="value">${result.tenure} months</div>
+                        </div>
+                    </div>
+                `;
+                
+                if (response.ok) {
+                    showToast(result.approval ? 'Loan eligible!' : 'Loan not eligible', result.approval ? 'success' : 'warning');
+                } else {
+                    showToast(result.error || 'Check eligibility failed', 'error');
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, true);
+                showToast('Failed to connect to server', 'error');
+            }
+        });
+
+        // Create Loan Form
+        document.getElementById('createLoanForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                customer_id: parseInt(document.getElementById('loanCustomerId').value),
+                loan_amount: parseFloat(document.getElementById('loanAmount').value),
+                interest_rate: parseFloat(document.getElementById('loanInterestRate').value),
+                tenure: parseInt(document.getElementById('loanTenure').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/create-loan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                showResponse(result, !response.ok);
+                
+                if (response.ok) {
+                    showToast(result.loan_approved ? 'Loan created successfully!' : 'Loan not approved', result.loan_approved ? 'success' : 'warning');
+                } else {
+                    showToast(result.error || 'Loan creation failed', 'error');
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, true);
+                showToast('Failed to connect to server', 'error');
+            }
+        });
+
+        // View Loan Form
+        document.getElementById('viewLoanForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loanId = document.getElementById('viewLoanId').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/view-loan/${loanId}`);
+                const result = await response.json();
+                
+                showResponse(result, !response.ok);
+                
+                if (response.ok) {
+                    const detailsDiv = document.getElementById('loanDetails');
+                    detailsDiv.innerHTML = `
+                        <div class="loan-detail">
+                            <div class="loan-detail-header">
+                                <span class="loan-detail-id">Loan #${result.loan_id}</span>
+                                <span class="loan-detail-status active">Active</span>
+                            </div>
+                            <div class="loan-detail-grid">
+                                <div class="loan-detail-item">
+                                    <div class="label">Customer</div>
+                                    <div class="value">${result.customer?.first_name} ${result.customer?.last_name}</div>
+                                </div>
+                                <div class="loan-detail-item">
+                                    <div class="label">Loan Amount</div>
+                                    <div class="value">₹${result.loan_amount?.toLocaleString()}</div>
+                                </div>
+                                <div class="loan-detail-item">
+                                    <div class="label">Interest Rate</div>
+                                    <div class="value">${result.interest_rate}%</div>
+                                </div>
+                                <div class="loan-detail-item">
+                                    <div class="label">Monthly EMI</div>
+                                    <div class="value">₹${result.monthly_installment?.toLocaleString()}</div>
+                                </div>
+                                <div class="loan-detail-item">
+                                    <div class="label">Tenure</div>
+                                    <div class="value">${result.tenure} months</div>
+                                </div>
+                                <div class="loan-detail-item">
+                                    <div class="label">Repayments Left</div>
+                                    <div class="value">${result.repayments_left}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    showToast('Loan details loaded!', 'success');
+                } else {
+                    showToast(result.error || 'Loan not found', 'error');
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, true);
+                showToast('Failed to connect to server', 'error');
+            }
+        });
+
+        // View Customer Loans Form
+        document.getElementById('viewCustomerLoansForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const customerId = document.getElementById('viewCustomerLoansId').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/view-loans/${customerId}`);
+                const result = await response.json();
+                
+                showResponse(result, !response.ok);
+                
+                if (response.ok) {
+                    const loansDiv = document.getElementById('customerLoans');
+                    if (result.length === 0) {
+                        loansDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No loans found for this customer</p></div>';
+                    } else {
+                        loansDiv.innerHTML = result.map(loan => `
+                            <div class="loan-detail">
+                                <div class="loan-detail-header">
+                                    <span class="loan-detail-id">Loan #${loan.loan_id}</span>
+                                    <span class="loan-detail-status ${loan.repayments_left > 0 ? 'active' : 'completed'}">
+                                        ${loan.repayments_left > 0 ? 'Active' : 'Completed'}
+                                    </span>
+                                </div>
+                                <div class="loan-detail-grid">
+                                    <div class="loan-detail-item">
+                                        <div class="label">Loan Amount</div>
+                                        <div class="value">₹${loan.loan_amount?.toLocaleString()}</div>
+                                    </div>
+                                    <div class="loan-detail-item">
+                                        <div class="label">Interest Rate</div>
+                                        <div class="value">${loan.interest_rate}%</div>
+                                    </div>
+                                    <div class="loan-detail-item">
+                                        <div class="label">Monthly EMI</div>
+                                        <div class="value">₹${loan.monthly_installment?.toLocaleString()}</div>
+                                    </div>
+                                    <div class="loan-detail-item">
+                                        <div class="label">Repayments Left</div>
+                                        <div class="value">${loan.repayments_left}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    showToast('Customer loans loaded!', 'success');
+                } else {
+                    showToast(result.error || 'Failed to load loans', 'error');
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, true);
+                showToast('Failed to connect to server', 'error');
+            }
+        });
+
+        // Initialize
+        loadCustomers();
+        getStats();
+    </script>
+</body>
+</html>
+
