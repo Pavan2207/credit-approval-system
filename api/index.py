@@ -14,9 +14,15 @@ os.environ.setdefault('VERCEL', 'True')
 import django
 django.setup()
 
-# Run migrations on Vercel
-from django.core.management import execute_from_command_line
-execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+# Run migrations only once during cold start
+migrate_marker = Path('/tmp/.migrations_run')
+if not migrate_marker.exists():
+    try:
+        from django.core.management import execute_from_command_line
+        execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+        migrate_marker.touch()
+    except Exception:
+        pass  # Ignore migration errors on subsequent runs
 
 from django.core.handlers.wsgi import WSGIHandler
 
