@@ -14,6 +14,10 @@ os.environ.setdefault('VERCEL', 'True')
 import django
 django.setup()
 
+# Run migrations on Vercel
+from django.core.management import execute_from_command_line
+execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+
 from django.core.handlers.wsgi import WSGIHandler
 
 # Initialize WSGI application
