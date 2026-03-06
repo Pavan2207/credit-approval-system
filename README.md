@@ -73,13 +73,19 @@ docker-compose up --build
 
 ## Deployment
 
+### Render (Recommended - Free)
+1. Go to https://render.com
+2. Connect your GitHub account
+3. Create "New Web Service"
+4. Select your repo
+5. Build Command: `pip install -r requirements.txt`
+6. Start Command: `gunicorn credit_system.wsgi:application`
+7. Click Deploy!
+
+Or use the included `render.yaml` for automatic configuration.
+
 ### Vercel
 This project is configured for Vercel deployment. Connect your GitHub repository to Vercel for automatic deployments.
-
-### Render
-1. Connect your GitHub repo to Render
-2. Build Command: `pip install -r requirements.txt`
-3. Start Command: `gunicorn credit_system.wsgi:application`
 
 ## Project Structure
 

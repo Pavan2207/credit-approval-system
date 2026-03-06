@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: credit-approval-system
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn credit_system.wsgi:application
+    repo: https://github.com/Pavan2207/credit-approval-system
+    region: oregon
+    plan: free
+
+databases:
+  - name: credit_db
+    region: oregon
+    plan: free
+
