@@ -28,5 +28,7 @@ RUN mkdir -p /data
 # Expose port
 EXPOSE 8000
 
-# Run migrations and start server (skip import if data files don't exist)
-CMD ["sh", "-c", "python manage.py migrate && python manage.py import_initial_data || true && gunicorn credit_system.wsgi:application --bind 0.0.0.0:8000"]
+# Run migrations and start server
+# Skip import_initial_data if data was already imported (use SKIP_IMPORT env var)
+CMD ["sh", "-c", "python manage.py migrate --run-syncdb && python manage.py migrate && ( [ \"$SKIP_IMPORT\" = \"true\" ] || python manage.py import_initial_data || true ) && gunicorn credit_system.wsgi:application --bind 0.0.0.0:8000"]
+
