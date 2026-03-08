@@ -68,9 +68,17 @@ WSGI_APPLICATION = 'credit_system.wsgi.application'
 
 # Check if we're using PostgreSQL (in Docker), SQLite (local), or Vercel
 DB_HOST = os.environ.get('DB_HOST', '')
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
 VERCEL_DEPLOYMENT = os.environ.get('VERCEL', 'False') == 'True'
+RENDER_DEPLOYMENT = os.environ.get('RENDER', 'False') == 'True'
 
-if VERCEL_DEPLOYMENT or not DB_HOST:
+if DATABASE_URL:
+    # Render deployment - use DATABASE_URL
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+elif VERCEL_DEPLOYMENT or not DB_HOST:
     # SQLite configuration (Vercel or local)
     DATABASES = {
         'default': {
