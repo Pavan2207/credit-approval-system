@@ -1,5 +1,6 @@
 """
 Management command to import initial data from Excel files.
+Handles the exact format from the Excel files.
 """
 import os
 import pandas as pd
@@ -26,12 +27,24 @@ class Command(BaseCommand):
             default='loan_data.xlsx',
             help='Path to loan data Excel file'
         )
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Force import even if data exists'
+        )
 
     def handle(self, *args, **options):
-        # Skip import if data already exists (check if customers/loans already in DB)
-        if Customer.objects.exists() or Loan.objects.exists():
-            self.stdout.write(self.style.WARNING('Data already exists in database, skipping import. Use --force to reimport.'))
-            return
+        # Check if data already exists
+        if not options.get('force'):
+            if Customer.objects.exists() or Loan.objects.exists():
+                self.stdout.write(self.style.WARNING('Data already exists in database, skipping import. Use --force to reimport.'))
+                return
+        
+        # Clear existing data if force is used
+        if options.get('force'):
+            Loan.objects.all().delete()
+            Customer.objects.all().delete()
+            self.stdout.write('Existing data cleared.')
         
         # Try to find the data files in common locations
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -90,7 +103,7 @@ class Command(BaseCommand):
             if max_customer:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT setval(pg_get_serial_sequence('customers', 'customer_id'), %s)",
+                        "SELECT setval(pg_get_serial_sequence('loans_customer', 'customer_id'), %s)",
                         [max_customer.customer_id]
                     )
                     self.stdout.write(f'Reset customer sequence to {max_customer.customer_id}')
@@ -100,7 +113,7 @@ class Command(BaseCommand):
             if max_loan:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT setval(pg_get_serial_sequence('loans', 'loan_id'), %s)",
+                        "SELECT setval(pg_get_serial_sequence('loans_loan', 'loan_id'), %s)",
                         [max_loan.loan_id]
                     )
                     self.stdout.write(f'Reset loan sequence to {max_loan.loan_id}')
@@ -187,19 +200,37 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.WARNING(f'Customer {customer_id} not found, skipping loan {loan_id}'))
                         continue
 
+                    # Parse dates
                     start_date = None
                     if pd.notna(date_of_approval):
                         if isinstance(date_of_approval, datetime):
                             start_date = date_of_approval.date()
                         else:
-                            start_date = parse_date(str(date_of_approval))
+                            # Try to parse various date formats
+                            date_str = str(date_of_approval)
+                            for fmt in ['%d/%m/%Y', '%m/%d/%Y', '%Y-%m-%d', '%d-%m-%Y']:
+                                try:
+                                    start_date = datetime.strptime(date_str, fmt).date()
+                                    break
+                                except:
+                                    continue
+                            if start_date is None:
+                                start_date = parse_date(date_str)
 
                     end_date_parsed = None
                     if pd.notna(end_date):
                         if isinstance(end_date, datetime):
                             end_date_parsed = end_date.date()
                         else:
-                            end_date_parsed = parse_date(str(end_date))
+                            date_str = str(end_date)
+                            for fmt in ['%d/%m/%Y', '%m/%d/%Y', '%Y-%m-%d', '%d-%m-%Y']:
+                                try:
+                                    end_date_parsed = datetime.strptime(date_str, fmt).date()
+                                    break
+                                except:
+                                    continue
+                            if end_date_parsed is None:
+                                end_date_parsed = parse_date(date_str)
 
                     defaults = {
                         'loan_amount': Decimal(str(loan_amount)) if pd.notna(loan_amount) else Decimal('0'),
