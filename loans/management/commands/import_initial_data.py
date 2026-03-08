@@ -28,6 +28,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Skip import if data already exists (check if customers/loans already in DB)
+        if Customer.objects.exists() or Loan.objects.exists():
+            self.stdout.write(self.style.WARNING('Data already exists in database, skipping import. Use --force to reimport.'))
+            return
+        
         # Try to find the data files in common locations
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         
