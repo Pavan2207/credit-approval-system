@@ -943,8 +943,8 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // API Base URL
-        const API_BASE = 'http://localhost:8000/api';
+        // API Base URL - use relative URL for both local and production
+        const API_BASE = ''; // Empty string = same origin
 
         // Utility Functions
         function formatJson(data) {
