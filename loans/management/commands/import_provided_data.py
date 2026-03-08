@@ -1,14 +1,15 @@
 """
-Management command to import the customer and loan data provided in the task.
-This command imports data directly from the data embedded in the command.
+Management command to import the provided real customer and loan data.
+This command imports data directly from the embedded data.
 """
 from decimal import Decimal
 from datetime import datetime
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from loans.models import Customer, Loan
 
 
-# Customer data from the task
+# Real customer data
 CUSTOMER_DATA = [
     {"customer_id": 1, "first_name": "Aaron", "last_name": "Garcia", "age": 63, "phone_number": "9629317944", "monthly_salary": 50000, "approved_limit": 4500000},
     {"customer_id": 2, "first_name": "Abbey", "last_name": "Gonzalez", "age": 20, "phone_number": "9278790909", "monthly_salary": 33000, "approved_limit": 1400000},
@@ -154,7 +155,7 @@ CUSTOMER_DATA = [
     {"customer_id": 142, "first_name": "Allyson", "last_name": "Roldan", "age": 33, "phone_number": "9332615028", "monthly_salary": 126000, "approved_limit": 1100000},
     {"customer_id": 143, "first_name": "Alma", "last_name": "Mateo", "age": 38, "phone_number": "9728766910", "monthly_salary": 206000, "approved_limit": 4900000},
     {"customer_id": 144, "first_name": "Almeda", "last_name": "Villar", "age": 32, "phone_number": "9974670955", "monthly_salary": 160000, "approved_limit": 4700000},
-    {"customer_id": 145, "first_name": "Almeta", "last_name": "Contreras", "age": 54, "971028322 "phone_number":7", "monthly_salary": 254000, "approved_limit": 2700000},
+    {"customer_id": 145, "first_name": "Almeta", "last_name": "Contreras", "age": 54, "phone_number": "9710283227", "monthly_salary": 254000, "approved_limit": 2700000},
     {"customer_id": 146, "first_name": "Alona", "last_name": "Miranda", "age": 58, "phone_number": "9799331943", "monthly_salary": 253000, "approved_limit": 4700000},
     {"customer_id": 147, "first_name": "Alonso", "last_name": "Guillen", "age": 70, "phone_number": "9212915606", "monthly_salary": 220000, "approved_limit": 1600000},
     {"customer_id": 148, "first_name": "Alonzo", "last_name": "Mateos", "age": 40, "phone_number": "9449095187", "monthly_salary": 93000, "approved_limit": 2000000},
@@ -313,7 +314,17 @@ CUSTOMER_DATA = [
 ]
 
 
-# Loan data from the task
+def parse_date(date_str):
+    """Parse date from dd/mm/yyyy format."""
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, '%d/%m/%Y').date()
+    except (ValueError, TypeError):
+        return None
+
+
+# Real loan data
 LOAN_DATA = [
     {"customer_id": 14, "loan_id": 5930, "loan_amount": 900000, "tenure": 129, "interest_rate": 8.2, "monthly_payment": 15344, "emis_paid_on_time": 114, "date_of_approval": "09/03/2017", "end_date": "09/12/2027"},
     {"customer_id": 270, "loan_id": 2941, "loan_amount": 300000, "tenure": 3, "interest_rate": 13.46, "monthly_payment": 100000, "emis_paid_on_time": 3, "date_of_approval": "06/09/2011", "end_date": "06/12/2011"},
@@ -335,18 +346,96 @@ LOAN_DATA = [
     {"customer_id": 280, "loan_id": 1787, "loan_amount": 600000, "tenure": 132, "interest_rate": 16.87, "monthly_payment": 25253, "emis_paid_on_time": 88, "date_of_approval": "29/12/2021", "end_date": "29/12/2032"},
     {"customer_id": 35, "loan_id": 9640, "loan_amount": 600000, "tenure": 129, "interest_rate": 11.83, "monthly_payment": 14228, "emis_paid_on_time": 122, "date_of_approval": "23/02/2012", "end_date": "23/11/2022"},
     {"customer_id": 209, "loan_id": 6917, "loan_amount": 700000, "tenure": 84, "interest_rate": 10.42, "monthly_payment": 16678, "emis_paid_on_time": 79, "date_of_approval": "10/01/2022", "end_date": "10/01/2029"},
-    {"customer_id": 70, "loan_id": 1438, "loan_amount": 500000, "tenure": 57, "interest_rate": 17.52, "monthly_payment": 16732, "emis_paid_on_time": 56, "date_of_approval": "13/08/2013", "end_date": "13/05/2018"},
-    {"customer_id": 186, "loan_id": 2767, "loan_amount": 500000, "tenure": 150, "interest_rate": 16.78, "monthly_payment": 21444, "emis_paid_on_time": 111, "date_of_approval": "26/08/2018", "end_date": "26/02/2031"},
-    {"customer_id": 270, "loan_id": 6018, "loan_amount": 600000, "tenure": 120, "interest_rate": 8.91, "monthly_payment": 11739, "emis_paid_on_time": 94, "date_of_approval": "02/12/2017", "end_date": "02/12/2027"},
-    {"customer_id": 223, "loan_id": 3363, "loan_amount": 700000, "tenure": 120, "interest_rate": 14.01, "monthly_payment": 21644, "emis_paid_on_time": 99, "date_of_approval": "04/04/2019", "end_date": "04/04/2029"},
-    {"customer_id": 107, "loan_id": 6719, "loan_amount": 200000, "tenure": 102, "interest_rate": 10.15, "monthly_payment": 4249, "emis_paid_on_time": 92, "date_of_approval": "26/01/2010", "end_date": "26/07/2018"},
-    {"customer_id": 265, "loan_id": 8112, "loan_amount": 500000, "tenure": 54, "interest_rate": 16.06, "monthly_payment": 16800, "emis_paid_on_time": 35, "date_of_approval": "17/07/2015", "end_date": "17/01/2020"},
-    {"customer_id": 260, "loan_id": 9996, "loan_amount": 600000, "tenure": 90, "interest_rate": 18, "monthly_payment": 21236, "emis_paid_on_time": 59, "date_of_approval": "12/02/2023", "end_date": "12/08/2030"},
-    {"customer_id": 15, "loan_id": 4439, "loan_amount": 900000, "tenure": 105, "interest_rate": 8.87, "monthly_payment": 16917, "emis_paid_on_time": 64, "date_of_approval": "07/03/2016", "end_date": "07/12/2024"},
-    {"customer_id": 125, "loan_id": 2826, "loan_amount": 400000, "tenure": 15, "interest_rate": 9.79, "monthly_payment": 29277, "emis_paid_on_time": 9, "date_of_approval": "18/02/2022", "end_date": "18/05/2023"},
-    {"customer_id": 173, "loan_id": 7191, "loan_amount": 300000, "tenure": 93, "interest_rate": 14.61, "monthly_payment": 8379, "emis_paid_on_time": 90, "date_of_approval": "01/08/2023", "end_date": "01/05/2031"},
-    {"customer_id": 129, "loan_id": 3792, "loan_amount": 300000, "tenure": 159, "interest_rate": 9.55, "monthly_payment": 6176, "emis_paid_on_time": 112, "date_of_approval": "06/01/2016", "end_date": "06/04/2029"},
-    {"customer_id": 276, "loan_id": 3056, "loan_amount": 400000, "tenure": 141, "interest_rate": 16.32, "monthly_payment": 14964, "emis_paid_on_time": 99, "date_of_approval": "24/07/2013", "end_date": "24/04/2025"},
-    {"customer_id": 24, "loan_id": 6592, "loan_amount": 300000, "tenure": 147, "interest_rate": 8.37, "monthly_payment": 5354, "emis_paid_on_time": 93, "date_of_approval": "26/09/2016", "end_date": "26/12/2028"},
-    {"customer_id": 288, "loan_id": 1151, "loan_amount": 900000, "tenure": 24, "interest_rate": 17.01, "monthly_payment": 51343, "emis_paid_on_time": 19, "date_of_approval": "24/07/2017", "end_date": "24/07/2019"},
-    {"customer_id": 74, "loan_id": 5639, "loan_amount": 200000, "tenure": 81, "interest_rate": 10.59, "monthly_payment": 4517, "emis
+]
+
+
+class Command(BaseCommand):
+    help = 'Import provided customer and loan data'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Force import even if data exists'
+        )
+
+    def handle(self, *args, **options):
+        if not options.get('force'):
+            if Customer.objects.exists() or Loan.objects.exists():
+                self.stdout.write(self.style.WARNING(
+                    'Data already exists. Use --force to reimport.'
+                ))
+                return
+
+        # Clear existing data if force is used
+        if options.get('force'):
+            Loan.objects.all().delete()
+            Customer.objects.all().delete()
+
+        customers_created = 0
+        customers_updated = 0
+        
+        self.stdout.write('Importing customer data...')
+        
+        with transaction.atomic():
+            for customer_data in CUSTOMER_DATA:
+                customer, created = Customer.objects.update_or_create(
+                    customer_id=customer_data['customer_id'],
+                    defaults={
+                        'first_name': customer_data['first_name'],
+                        'last_name': customer_data['last_name'],
+                        'age': customer_data['age'],
+                        'phone_number': str(customer_data['phone_number']),
+                        'monthly_salary': Decimal(str(customer_data['monthly_salary'])),
+                        'approved_limit': Decimal(str(customer_data['approved_limit'])),
+                    }
+                )
+                if created:
+                    customers_created += 1
+                else:
+                    customers_updated += 1
+
+        self.stdout.write(self.style.SUCCESS(
+            f'Customer data imported: {customers_created} created, {customers_updated} updated'
+        ))
+
+        loans_created = 0
+        loans_updated = 0
+        
+        self.stdout.write('Importing loan data...')
+        
+        with transaction.atomic():
+            for loan_data in LOAN_DATA:
+                try:
+                    customer = Customer.objects.get(customer_id=loan_data['customer_id'])
+                except Customer.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(
+                        f'Customer {loan_data["customer_id"]} not found, skipping loan {loan_data["loan_id"]}'
+                    ))
+                    continue
+
+                loan, created = Loan.objects.update_or_create(
+                    loan_id=loan_data['loan_id'],
+                    customer=customer,
+                    defaults={
+                        'loan_amount': Decimal(str(loan_data['loan_amount'])),
+                        'tenure': loan_data['tenure'],
+                        'interest_rate': Decimal(str(loan_data['interest_rate'])),
+                        'monthly_repayment': Decimal(str(loan_data['monthly_payment'])),
+                        'emis_paid_on_time': loan_data['emis_paid_on_time'],
+                        'start_date': parse_date(loan_data['date_of_approval']),
+                        'end_date': parse_date(loan_data['end_date']),
+                        'is_approved': True,
+                    }
+                )
+                if created:
+                    loans_created += 1
+                else:
+                    loans_updated += 1
+
+        self.stdout.write(self.style.SUCCESS(
+            f'Loan data imported: {loans_created} created, {loans_updated} updated'
+        ))
+        
+        self.stdout.write(self.style.SUCCESS('Data import completed!'))
+
