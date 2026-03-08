@@ -4,7 +4,7 @@ services:
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: >
-      sh -c "python manage.py migrate --run-syncdb && gunicorn credit_system.wsgi:application"
+      sh -c "python manage.py migrate --run-syncdb && gunicorn credit_system.wsgi:application --bind 0.0.0.0:$PORT"
     repo: https://github.com/Pavan2207/credit-approval-system
     region: oregon
     plan: free
@@ -17,6 +17,8 @@ services:
         generateValue: true
       - key: DEBUG
         value: "True"
+      - key: DISABLE_COLLECTSTATIC
+        value: "1"
 
 databases:
   - name: credit_db

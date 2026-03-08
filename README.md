@@ -2,6 +2,11 @@
 
 A Django-based credit approval system with PostgreSQL database, DRF (Django Rest Framework), and background task workers (Celery) for data ingestion.
 
+## Live Demo
+
+- **Render**: https://credit-approval-system-tbq6.onrender.com/
+- **Vercel**: https://credit-approval-system.vercel.app/
+
 ## Features
 
 - **Customer Registration** - Register new customers
