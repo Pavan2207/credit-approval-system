@@ -9,7 +9,7 @@ services:
       python manage.py migrate --run-syncdb || true &&
       python manage.py migrate --noinput ||
       (echo 'Migration failed, retrying in 10s...' && sleep 10 && python manage.py migrate --noinput) &&
-      python manage.py create_sample_data --force || true &&
+      python manage.py import_initial_data --force || true &&
       gunicorn credit_system.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
       "
     repo: https://github.com/Pavan2207/credit-approval-system
