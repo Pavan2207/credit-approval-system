@@ -10,7 +10,7 @@ from celery.schedules import crontab
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY', os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
@@ -66,14 +66,13 @@ WSGI_APPLICATION = 'credit_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Check if we're using PostgreSQL (in Docker), SQLite (local), or Vercel
+# Check if we're using PostgreSQL (in Docker), SQLite (local), Vercel, or Render
 DB_HOST = os.environ.get('DB_HOST', '')
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 VERCEL_DEPLOYMENT = os.environ.get('VERCEL', 'False') == 'True'
-RENDER_DEPLOYMENT = os.environ.get('RENDER', 'False') == 'True'
 
 if DATABASE_URL:
-    # Render deployment - use DATABASE_URL
+    # Render deployment - use DATABASE_URL (provided by Render's PostgreSQL)
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)

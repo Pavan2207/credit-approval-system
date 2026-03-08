@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "options": {
+        "runtime": "python3.12"
+      }
     }
   ],
   "routes": [
@@ -14,7 +17,8 @@
   ],
   "env": {
     "PYTHONUNBUFFERED": "1",
-    "DJANGO_SETTINGS_MODULE": "credit_system.settings"
+    "DJANGO_SETTINGS_MODULE": "credit_system.settings",
+    "VERCEL": "True"
   }
 }
 

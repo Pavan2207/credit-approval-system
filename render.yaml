@@ -2,48 +2,27 @@ services:
   - type: web
     name: credit-approval-system
     env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: >
+      sh -c "python manage.py migrate --run-syncdb && python manage.py migrate && python manage.py import_initial_data && gunicorn credit_system.wsgi:application --bind 0.0.0.0:$PORT"
+    repo: https://github.com/Pavan2207/credit-approval-system
     region: oregon
-    buildCommand: pip install -r requirements.txt && python manage.py migrate
-    startCommand: gunicorn credit_system.wsgi:application --bind 0.0.0.0:$PORT
+    plan: free
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: credit_system.settings
-      - key: DEBUG
-        value: False
-      - key: PYTHONUNBUFFERED
-        value: "1"
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: credit_db
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
-    disk:
-      mountPath: /app/data
-      name: app-data
-
-  - type: pserv
-    name: celery
-    env: python
-    region: oregon
-    buildCommand: pip install -r requirements.txt
-    startCommand: celery -A credit_system worker -l info
-    envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: credit_system.settings
       - key: DEBUG
-        value: False
-      - key: PYTHONUNBUFFERED
+        value: "True"
+      - key: DISABLE_COLLECTSTATIC
         value: "1"
-      - key: CELERY_BROKER_URL
-        fromService:
-          name: redis
-          property: connectionString
-      - key: CELERY_RESULT_BACKEND
-        fromService:
-          name: redis
-          property: connectionString
 
-  - type: redis
-    name: redis
+databases:
+  - name: credit_db
     region: oregon
-    maxmemoryPolicy: allkeys-lru
+    plan: free
+    postgresMajorVersion: "15"
 

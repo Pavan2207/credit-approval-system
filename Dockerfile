@@ -22,16 +22,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Create data directory
+# Create data directory (optional - won't fail if files don't exist)
 RUN mkdir -p /data
-
-# Copy data files to data directory
-COPY customer_data.xlsx /data/
-COPY loan_data.xlsx /data/
 
 # Expose port
 EXPOSE 8000
 
 # Run migrations and start server
-CMD ["sh", "-c", "python manage.py migrate && python manage.py import_initial_data && gunicorn credit_system.wsgi:application --bind 0.0.0.0:8000"]
+# Skip import_initial_data if data was already imported (use SKIP_IMPORT env var)
+CMD ["sh", "-c", "python manage.py migrate --run-syncdb && python manage.py migrate && ( [ \"$SKIP_IMPORT\" = \"true\" ] || python manage.py import_initial_data || true ) && gunicorn credit_system.wsgi:application --bind 0.0.0.0:8000"]
 
